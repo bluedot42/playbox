@@ -1,4 +1,4 @@
-# azure-poc
+# Azure
 
 POC application to test various features of Azure
 
