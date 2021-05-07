@@ -1,0 +1,115 @@
+{
+   "$schema": "https://json-schema.org/draft/2020-12/schema",
+   "$id": "https://<xxx>/consoleTelemetry.schema.json",
+   "title": "Dozer telemetry",
+   "description": "Autnomous dozer's telemetry",
+   "type": "object",
+   "properties": {
+     "msgId": {
+       "description": "The unique identifier for the telemetry",
+       "type": "string"
+     },
+     "dozerId": {
+      "description": "unique identifier of the dozer",
+      "type": "string"
+      },
+     "timestamp": {
+       "description": "Local timestamp of the message",
+       "type": "string"
+     },
+     "messageType": {
+        "description": "Message type",
+        "type":"string",
+        "enum": ["telemetry", "generalEvent", "emergencyEvent", "controlCommand"]
+     },
+     "payload":{
+         "description": "Payload definition",
+         "type": "object",
+         "properties": {
+            "dozerStatus": {
+               "description": "current operating status of dozer",
+               "type": "string",
+               "enum": ["operating", "standby", "starting", "emergencyStop"]
+             },
+             "dozerSWVersion": {
+               "description": "current softwrae versoin of the dozer",
+               "type": "string"
+             },
+             "dozerLocation":{
+               "description": "A geographical coordinate",
+               "type": "object",
+               "properties": {
+                 "latitude": {
+                   "type": "number",
+                   "minimum": -90,
+                   "maximum": 90
+                 },
+                 "longitude": {
+                   "type": "number",
+                   "minimum": -180,
+                   "maximum": 180
+                 }
+               },
+               "required": [ "latitude", "longitude" ]
+             },
+            "surrounding": {
+               "description": "Dozer surrounding objects list",
+               "type": "array",
+               "items": {
+                  "type": "object",
+                  "properties": {
+                     "distance": {
+                           "type": "number",
+                           "description": "distance of the detected object to the dozer"
+                     },
+                     "direction": {
+                           "type": "number",
+                           "minimum": 0,
+                           "maximum": 360,
+                           "description": "heading direction of the detected object in angles"
+                     },
+                     "speed": {
+                           "type": "number"
+                     },
+                     "category": {
+                           "type": "string",
+                           "enum": ["PERSON", "OBSTACLE", "VEHICLE"]
+                     }
+                  },
+                  "required": ["distance","direction","speed","category"]
+                  }
+               },
+            "heatmap": {
+               "description": "Dozer scanned heatmap results",
+               "type": "array",
+               "items": {
+                  "type": "object",
+                  "properties": {
+                     "latitude": {
+                        "type": "number",
+                        "description": "latitude of the left lower corner of the heatmap box"
+                     },
+                     "longitude": {
+                        "type": "number",
+                        "description": "longitude of the left lower corner of the heatmap box"
+                     },
+                     "boxSize":{
+                        "type": "number",
+                        "description": "The size in centimeter of the heatmap box of this entry",
+                        "enum": [50, 100, 200, 500]
+                     },
+                     "depth":{
+                        "type": "number",
+                        "description": "Scanned depth result, -1 is red, 0 = green, 1 = blue",
+                        "enum": [-1, 0, 1]
+                     }
+                  },
+                  "required": ["latitude","longitude","boxSize","depth"]
+               }
+            }
+         },
+         "required": ["dozerStatus","dozerSWVersion", "dozerLocation", "surrounding","heatmap"]
+     }
+   },
+   "required": [ "dozerId", "msgId", "timestamp", "messageType" ,"payload" ]
+ }

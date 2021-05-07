@@ -1,0 +1,82 @@
+{
+   "$schema": "https://json-schema.org/draft/2020-12/schema",
+   "$id": "https://xxx/consoleBrowserUpdate.schema.json",
+   "title": "Console browser update",
+   "description": "Updates received by console browsers",
+   "type": "object",
+   "properties": {
+     "msgId": {
+       "description": "The unique identifier for the message",
+       "type": "string"
+     },
+     "timestamp": {
+       "description": "Local timestamp of the message",
+       "type": "string"
+     },
+     "payload":{
+         "description": "Payload definition",
+         "type": "object",
+         "properties": {
+           "vehicleList": {
+              "description":"List of vehiciles",
+              "type": "array",
+              "items":{
+                "type":"object",
+                "properties":{"vehicleId":{"type":"string"},"latitude":{"type":"number"},"longitude":{"type":"number"}}, 
+                "required": [ "vehicleId", "latitude", "longitude" ]
+              }
+           },
+           "objectList": {
+              "description":"List of detected objects",
+              "type": "array",
+              "items":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}}
+           },
+           "zoneList": {
+              "description": "List of zones at the construction site",
+              "type": "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "type": "array",
+                  "items": {
+                    "type":"object",
+                    "properties": {"latitude":{"type":"number"},"longitude":{"type":"number"}},
+                    "minItems":3
+                  }
+                }
+              }
+           },
+           "heatmap": {
+              "description": "Heatmap results",
+              "type": "array",
+              "items": {
+                  "type": "object",
+                  "properties": {
+                    "latitude": {
+                        "type": "number",
+                        "description": "latitude of the left lower corner of the heatmap box"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "description": "longitude of the left lower corner of the heatmap box"
+                    },
+                    "boxSize":{
+                        "type": "number",
+                        "description": "The size in centimeter of the heatmap box of this entry",
+                        "enum": [50, 100, 200, 500]
+                    },
+                    "depth":{
+                        "type": "number",
+                        "description": "Scanned depth result, -1 is red, 0 = green, 1 = blue",
+                        "enum": [-1, 0, 1]
+                    }
+                  },
+                  "required": ["latitude","longitude","boxSize","depth"]
+              }
+            }
+         },
+         "required": ["vehicleList","objectList","zoneList","heatmap"]
+     }
+   },
+   "required": [ "msgId", "timestamp", "payload" ]
+ }

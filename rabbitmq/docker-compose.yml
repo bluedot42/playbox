@@ -1,0 +1,51 @@
+version: "3.8"
+
+services:
+      
+  rabbitmq:
+    image: rabbitmq-admin-stomp-mqtt:latest
+    container_name: rabbitmq-poc
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    volumes:
+      - vol-rabbitmq-log:/var/log/rabbitmq/
+      - vol-rabbitmq-data:/var/lib/rabbitmq/mnesia/
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    
+
+# TODO: on windows 10, unable to mount named volumes
+volumes:
+  vol-rabbitmq-log:
+  vol-rabbitmq-data:
+  # vol-mysql:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-mysql"
+  #     type: "none"
+  # vol-mongo:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-mongo"
+  #     type: "none"
+  # vol-nginx-log:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-nginx-log"
+  #     type: "none"
+  # vol-redis:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-redis"
+  #     type: "none"
+  # vol-rabbitmq:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-rabbitmq"
+  #     type: "none"
+  # vol-rabbitmq-data:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-rabbitmq-data"
+  #     type: "none"
+  # vol-rabbitmq-log:
+  #   driver_opts: 
+  #     device: "${VOL_DIR}vol-rabbitmq-log"
+  #     type: "none"

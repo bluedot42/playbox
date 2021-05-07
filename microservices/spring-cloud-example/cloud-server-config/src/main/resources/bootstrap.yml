@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: cloud-server-config
+  profiles.active: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/ThoreauZZ/spring-cloud-example.git
+          searchPaths: config-repo
+          force-pull: true
+        bootstrap: true
+    stream:
+      bindings:
+        springCloudBusOutput:
+          destination: springCloudBusInput
+          contentType: application/json
+server:
+  port: 9000
+
+---
+spring:
+  profiles: dev
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:9001/eureka/
+
+
+---
+spring:
+  profiles: docker
+
+server:
+  port: ${SERVICE_PORT}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: ${REGISTRY_URL}
+

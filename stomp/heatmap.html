@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple demo web with StompJs</title>
+</head>
+<body>
+<div id="wrapper">
+    <div id="heatmap"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.0/bundles/stomp.umd.min.js"></script>
+
+<script type="application/javascript">
+  $(function () {
+    let stompClient;
+
+    const stompConfig = {
+      connectHeaders: {
+        login: "browser",
+        passcode: "browser",
+        host: "vhost-browser"
+      },
+
+      brokerURL: "ws://localhost:15674/ws",
+
+      debug: function (str) {
+        console.log('STOMP: ' + str);
+      },
+
+      reconnectDelay: 5000,
+
+      // Subscriptions should be done inside onConnect as those need to reinstated when the broker reconnects
+      onConnect: function (frame) {
+        // The return object has a method called `unsubscribe`
+        const subscription = stompClient.subscribe('/topic/heatmap', function (message) {
+          const payload = JSON.parse(message.body);
+        //   console.log(payload);
+          displayIncomingMessage(payload.ts, payload.msgID, payload.messageType);
+        });
+      },
+
+      onStompError: function (frame) {
+        console.log('Broker reported error: ' + frame.headers['message']);
+        console.log('Additional details: ' + frame.body);
+      }
+    };
+
+    // Create an instance
+    stompClient = new StompJs.Client(stompConfig);
+
+    // Attempt to connect
+    stompClient.activate();
+
+    function displayIncomingMessage(ts, id, type) {
+      const msgDiv = $("<div>").addClass("msgln");
+      msgDiv.html('<span class="ts">[' + ts + ']: </span><span class="id">[' + id + ']: </span><span class="type">' + type + '</span>');
+      $("#heatmap").append(msgDiv);
+    }
+  })
+</script>
+</body>
+</html>

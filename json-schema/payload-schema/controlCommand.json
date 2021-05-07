@@ -1,0 +1,109 @@
+{
+   "$schema": "https://json-schema.org/draft/2020-12/schema",
+   "$id": "https://<xxx>/controlCommand.schema.json",
+   "title": "Control command",
+   "description": "Control command sent from master system to dozer",
+   "type": "object",
+   "properties": {
+     "msgId": {
+       "description": "The unique identifier for the command",
+       "type": "string"
+     },
+     "timestamp": {
+       "description": "Local timestamp of the message",
+       "type": "string"
+     },
+     "messageType": {
+        "description": "Message type",
+        "type":"string",
+        "enum": ["controlCommand"]
+     },
+     "payload":{
+         "description": "Payload definition",
+         "type": "object",
+         "properties": {
+            "targetDozer":{
+               "description": "Target list of dozer for this command",
+               "type": "array",
+               "items": {
+                  "type":"string",
+                  "description":"unique id of the target dozer"
+               }
+            },
+            "commandOperation":{
+               "description": "Operation to be performed",
+               "type":"string",
+               "enum": ["updateConfiguration","updateSoftware","performSelfDiagnosis","performSecurityCheck","stopDozer"]
+            },
+            "allOf":[
+               {
+                  "if":{"commandOperation": {"const": "updateConfiguration"}},
+                  "then":{"commandBody":{"$ref":"#/definitions/updateConfigurationCommand"}}
+               },
+               {
+                  "if":{"commandOperation": {"const": "updateSoftware"}},
+                  "then":{"commandBody":{"$ref":"#/definitions/updateSoftwareCommand"}}
+               },
+               {
+                  "if":{"commandOperation": {"const": "performSelfDiagnosis"}},
+                  "then":{"commandBody":{"$ref":"#/definitions/performSelfDiagnosisCommand"}}
+               },
+               {
+                  "if":{"commandOperation": {"const": "performSecurityCheck"}},
+                  "then":{"commandBody":{"$ref":"#/definitions/performSecurityCheckCommand"}}
+               },
+               {
+                  "if":{"commandOperation": {"const": "stopDozer"}},
+                  "then":{"commandBody":{"$ref":"#/definitions/stopDozerCommand"}}
+               }
+            ]
+         },
+         "required": ["targetDozer","commandOperation","commandBody"]
+     }
+   },
+   "required": [ "dozerId", "msgId", "timestamp", "messageType" ,"payload" ],
+   "definitions": {
+      "updateConfigurationCommand": {
+        "type": "object",
+        "properties": {
+          "targetVersion": { "type": "string" },
+          "confFileURL":  { "type": "string" },
+          "compatibleVersion": { "type": "array", "items": { "type": "string"}}
+        },
+        "required": ["targetVersion", "confFileURL", "compatibleVersion"]
+      },
+      "updateSoftwareCommand": {
+         "type": "object",
+         "properties": {
+           "targetVersion": { "type": "string" },
+           "swPackageURL":  { "type": "string" },
+           "compatibleVersion": { "type": "array", "items": { "type": "string"}}
+         },
+         "required": ["targetVersion", "swPackageURL", "compatibleVersion"]
+       },
+       "performSelfDiagnosisCommand": {
+         "type": "object",
+         "properties": {
+           "targetVersion": { "type": "string" },
+           "compatibleVersion": { "type": "array", "items": { "type": "string"}}
+         },
+         "required": ["targetVersion", "compatibleVersion"]
+       },
+       "performSecurityCheckCommand": {
+         "type": "object",
+         "properties": {
+           "targetVersion": { "type": "string" },
+           "compatibleVersion": { "type": "array", "items": { "type": "string"}}
+         },
+         "required": ["targetVersion", "compatibleVersion"]
+       },
+       "stopDozerCommand": {
+         "type": "object",
+         "properties": {
+           "targetVersion": { "type": "string" },
+           "compatibleVersion": { "type": "array", "items": { "type": "string"}}
+         },
+         "required": ["targetVersion","compatibleVersion"]
+       }
+    }
+ }
